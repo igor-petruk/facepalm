@@ -20,26 +20,33 @@
         return;
     }
 
-    function like(param){
-        alert(param);
+    function likeImage(imageUrl, counterSpan){
+        alert("Liked "+imageUrl);
     }
 
     $('img').each(function() {
+        var imgSrc = $(this).attr("src");
         $(this).qtip({
             // content: '<a href="#">Edit</a> | <a href="#">Delete</a>', // Give it some content
             content:{
                 text: 'Loading...', // The text to use whilst the AJAX request is loading
                 ajax: {
-                    url: 'http://localhost:9000/count/'+encodeURIComponent(window.location.toString())+"/"+encodeURIComponent($(this).attr("src")), // URL to the local file
+                    url: 'http://localhost:9000/count/'+encodeURIComponent(window.location.toString())+"/"+encodeURIComponent(imgSrc), // URL to the local file
                     once: false,
                     type: 'GET', // POST or GET
                     data: {}, // Data to pass along with your request
                     success: function(data, status) {
-                        var a = $("<a>").text("Like "+data.count);
+                        var a = $("<a>").text("Like");
+
+                        var counter = $("<span>").text(data.count);
+
                         a.on("click",function(e){
-                            alert(this);
+                            likeImage(imgSrc, counter);
                         });
-                        this.set('content.text', a);
+                        var span = $("<span>");
+                        span.append(a);
+                        span.append(" ").append(counter);
+                        this.set('content.text', span);
 
                     }
                 }
