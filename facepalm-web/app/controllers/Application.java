@@ -33,9 +33,11 @@ public class Application extends Controller {
 		SocialApplication app = SocialApplication.FACEBOOK;
 		boolean isLoogedIn = LoginManager.isLoggedIn(app, s);
 		
-		String countResult = JsonResponse.getCount(0, isLoogedIn);
+		Integer value = LikeRepository.getLikeCount(siteUrl, imageUrl);
 		
-		renderJSON(countResult);
+		String result = JsonResponse.getCount(value, isLoogedIn);
+		
+		renderJSON(result);
 	}
 
 	public static void like(String siteUrl, String imageUrl)
