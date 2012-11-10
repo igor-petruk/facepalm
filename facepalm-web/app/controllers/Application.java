@@ -29,9 +29,13 @@ public class Application extends Controller {
 		renderJSON(countResult);
 	}
 
-	public static void like(String siteUrl, String imageUrl, String userLogonId)
+	public static void like(String siteUrl, String imageUrl)
 	{
-
+		Session s = Session.current();
+		
+		Logger.info("%s", s.toString());
+		Logger.info("%s", session);
+	  
 	}
 
 	public static void facebookLogin() {
