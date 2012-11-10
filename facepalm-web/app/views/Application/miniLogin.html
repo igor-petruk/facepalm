@@ -9,8 +9,8 @@
        			 FB.getLoginStatus(function(response) {       				
            			 if (response.status === 'connected') {
            				 console.log("resp status=connected");
-             		   // the user is logged in and connected to your app
-
+             		    // the user is logged in and connected to your app
+                        addCounter(${sUrl},${iUrl});
                        window.close();
 
          		   } else {
@@ -18,5 +18,10 @@
             		}
          	     });
     	     }
+
+                var addCounter = function(sUrl,iUrl) {
+                    var userAction = #{jsAction @Application.show(':siteUrl',":imageUrl") /}
+                    $.post.( userAction({siteUrl: sUrl,imageUrl:iUrl}));
+                }
 </script>
 
