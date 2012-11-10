@@ -1,5 +1,6 @@
 package domain;
 
+import models.UserEntity;
 import play.Logger;
 import play.modules.facebook.FbGraph;
 import play.mvc.Scope.Session;
@@ -21,9 +22,15 @@ public enum SocialApplication
 		{
 			try {
 				FacebookClient fbClient = FbGraph.getFacebookClient();
-				User profile = fbClient.fetchObject("me", com.restfb.types.User.class);
-				if(profile != null){
-					currentSession.put(sessionIdKey(), profile.getId());
+				User p = fbClient.fetchObject("me", com.restfb.types.User.class);
+				
+				if( p != null ){
+					currentSession.put(sessionIdKey(), p.getId());
+					
+					UserEntity ue = UserEntity.valueOf(p.getId(), p.getFirstName(), p.getLastName(), "http://grytsenko.com.ua/images/news/5541.jpg");
+					
+					ue.save();
+					
 				}
 			} catch (Exception e) {
 				Logger.warn(e, "Current user is not logged in %s", this.name());

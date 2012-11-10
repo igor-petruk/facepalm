@@ -26,6 +26,17 @@ public class UserEntity extends GenericModel {
 		// TODO Auto-generated constructor stub
 	}
 	
+	public static UserEntity valueOf(String appUserId, String firstName, String secondName, String pictureUrl){
+		UserEntity ue = new UserEntity();
+		
+		ue.setAppUserId(appUserId);
+		ue.setFirstName(firstName);
+		ue.setSecondName(secondName);
+		ue.setPictureUrl(pictureUrl);
+		
+		return ue;
+	}
+	
 	public void setAppUserId(String appUserId)
 	{
 		this.appUserId = appUserId;

@@ -28,6 +28,17 @@ public class ImageEntity extends Model implements Comparable<ImageEntity> {
 		
 	}
 	
+	public static ImageEntity valueOf(String siteUrl, String imageUrl, String userToken){
+		ImageEntity ie = new ImageEntity();
+		
+		ie.setSiteUrl(siteUrl);
+		ie.setImageUrl(imageUrl);
+		ie.setUserToken(userToken);
+		
+		return ie;
+		
+	}
+		
 	public void setId(Long id)
 	{
 		this.id = id;
@@ -48,14 +59,14 @@ public class ImageEntity extends Model implements Comparable<ImageEntity> {
 		this.userToken = userToken;
 	}
 	
-	@PrePersist
 	public void setDate(Date date)
 	{
-		if ( date == null){
-			this.date = new Date();
-		} else {
-			this.date = date;
-		}
+		this.date = date;
+	}
+	
+	@PrePersist
+	void setLikeDate(){
+		this.date = new Date();
 	}
 
 	@Override

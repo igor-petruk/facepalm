@@ -90,12 +90,7 @@ public class Application extends Controller {
 			
 			if( ie == null){	// new like from this user 
 
-				ImageEntity ieNew = new ImageEntity();
-
-				ieNew.setSiteUrl(siteUrl);
-				ieNew.setImageUrl(imageUrl);
-				ieNew.setUserToken(LoginManager.userId(APP, s));
-
+				ImageEntity ieNew = ImageEntity.valueOf( siteUrl, imageUrl, LoginManager.userId(APP, s) );
 				ieNew.save();
 				
 				wasLiked = true;
