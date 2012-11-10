@@ -1,16 +1,18 @@
 package controllers;
 
-import play.*;
+import play.Logger;
 import play.modules.facebook.FbGraph;
-import play.modules.facebook.FbGraphException;
-import play.mvc.*;
+import play.mvc.Controller;
+import play.mvc.Http;
+import play.mvc.Http.Response;
 import play.mvc.Scope.Session;
 
-import java.util.*;
-
-import com.google.gson.JsonObject;
 import com.restfb.FacebookClient;
 import com.restfb.types.User;
+
+import domain.JsonResponse;
+import domain.LoginManager;
+import domain.SocialApplication;
 
 public class Application extends Controller {
 
@@ -25,17 +27,23 @@ public class Application extends Controller {
 	public static void count(String siteUrl, String imageUrl)
 	{
 		Logger.info(">>> count <<< site url : %s image url : %s", siteUrl, imageUrl);
-		String countResult = String.format("{\"count\": %d}", 0);
+		
+		String countResult = JsonResponse.getCount(0);
+		
 		renderJSON(countResult);
 	}
 
 	public static void like(String siteUrl, String imageUrl)
 	{
 		Session s = Session.current();
+		SocialApplication app = SocialApplication.FACEBOOK;
 		
-		Logger.info("%s", s.toString());
-		Logger.info("%s", session);
-	  
+		if ( LoginManager.isLoggedIn(app, s) ){
+			
+		} else {
+			Response.current().status = Http.StatusCode.FORBIDDEN;
+		}
+
 	}
 
 	public static void facebookLogin() {
