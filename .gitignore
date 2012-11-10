@@ -5,6 +5,7 @@
 !.gitignore
 
 # Ignore Play! working directory #
+facepalm-web/lib/*
 db
 eclipse
 log
@@ -25,3 +26,5 @@ target/
 *.ipr
 *.iml
 .idea
+out
+
