@@ -1,8 +1,7 @@
 #{extends 'main.html' /}
 #{set title:'Home' /}
 
-<h2>This is normal login with facebook</h2>
-
+<h2>This is mini login to facebook</h2>
 <div id="fb_login"> <fb:login-button onlogin="facebookLogin();"></fb:login-button> </div>
 
 <script type="text/javascript">
@@ -11,11 +10,13 @@
            			 if (response.status === 'connected') {
            				 console.log("resp status=connected");
              		   // the user is logged in and connected to your app
-             		   window.location = "@{Application.index()}";
+
+                       window.close();
+
          		   } else {
                 	   window.location = "@{Application.facebookLogout()}";
             		}
          	     });
     	     }
-		</script>
+</script>
 

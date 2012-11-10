@@ -23,8 +23,12 @@ public class Application extends Controller {
 			FacebookClient fbClient = FbGraph.getFacebookClient();
 			User profile = fbClient.fetchObject("me", com.restfb.types.User.class);
 			Logger.info("profile=%s", profile.getName());
-			user(profile.getName(),profile.getId());
-		}catch(Exception ex){
+            String uid = profile.getId()+" ";
+            String name = profile.getFirstName();
+            Session.current().put("username", uid);
+            user(profile.getName(),profile.getId());
+
+        }catch(Exception ex){
 			//not logged in, show button	
 			login();
 		}	
@@ -36,12 +40,20 @@ public class Application extends Controller {
 	
 
 	public static void login(){
-		boolean isShowLoginButton=true;
-		render(isShowLoginButton);
-	}	
-	
+        if("check is login".equals("login")){
 
-	public static void count(String siteUrl, String imageUrl)
+        }else{
+		    render();
+        }
+	}
+
+    public static void miniLogin(String siteUrl, String imageUrl){
+        boolean isShowLoginButton=true;
+        render(isShowLoginButton);
+    }
+
+
+    public static void count(String siteUrl, String imageUrl)
 	{
 		Logger.info("Site url : %s image url : %s", siteUrl, imageUrl);
 		
@@ -71,20 +83,6 @@ public class Application extends Controller {
 			Response.current().status = Http.StatusCode.FORBIDDEN;
 		}
 
-	}
-
-
-	public static void facebookLogin() {
-		
-		FacebookClient fbClient = FbGraph.getFacebookClient();
-		
-		User profile = fbClient.fetchObject("me", com.restfb.types.User.class);
-		String uid = profile.getId()+" ";
-		String name = profile.getFirstName();				
-		 
-		Session.current().put("username", uid); 
-
-		index();
 	}
 
 	public static void facebookLogout() {

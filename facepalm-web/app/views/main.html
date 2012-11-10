@@ -5,10 +5,15 @@
         <title>#{get 'title' /}</title>
         <meta charset="${_response_encoding}">
         <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/main.css'}">
+        <link rel="stylesheet" type="text/css" media="screen" href="@{'/public/bootstrap/css/bootstrap.css'}">
         #{get 'moreStyles' /}
         <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.png'}">
         <script src="@{'/public/javascripts/jquery-1.8.2.js'}" type="text/javascript" charset="${_response_encoding}"></script>
         <script type="text/javascript" src="https://connect.facebook.net/en_US/all.js"></script>
+
+        <script type="text/javascript" src="@{'/public/bootstrap/js/bootstrap.js'}"></script>
+
+
         <script>
         
 			FB.init({
@@ -25,9 +30,11 @@
         
     </head>
     <body>
+        <div class="container">
     	<div id="fb-root"></div> 
        <h1>Hackaton - Facepalm.com (Like any content on the net)</h>
-       #{doLayout /}	
+       #{doLayout /}
+        </div>
 		
     </body>
 </html>
