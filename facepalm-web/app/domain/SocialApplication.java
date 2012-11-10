@@ -19,7 +19,7 @@ public enum SocialApplication
 				User profile = fbClient.fetchObject("me", com.restfb.types.User.class);
 				isLogged = profile != null;
 			} catch (Exception e){
-				Logger.error(e, "Current user is not logged in %s", this.name());
+				Logger.warn(e, "Current user is not logged in %s", this.name());
 				isLogged = false;
 			}
 			return isLogged;

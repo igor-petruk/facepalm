@@ -29,12 +29,8 @@ public class Application extends Controller {
 	{
 		Logger.info("Site url : %s image url : %s", siteUrl, imageUrl);
 		
-		Session s = Session.current();
-		SocialApplication app = SocialApplication.FACEBOOK;
-		boolean isLoogedIn = LoginManager.isLoggedIn(app, s);
-		
+		boolean isLoogedIn = true;
 		Integer value = LikeRepository.getLikeCount(siteUrl, imageUrl);
-		
 		String result = JsonResponse.getCount(value, isLoogedIn);
 		
 		renderJSON(result);
