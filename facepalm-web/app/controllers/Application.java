@@ -63,7 +63,6 @@ public class Application extends Controller {
 
 	public static void count(String siteUrl, String imageUrl)
 	{
-
 		boolean wasLiked = false;
 		if ( LoginManager.isLoggedInSoft(APP, Session.current()) ) {
 			String uToken = LoginManager.loggedUserToken(APP, Session.current());
@@ -103,7 +102,6 @@ public class Application extends Controller {
 			} else {	// unlike 
 				ie.delete();
 			}
-
 			
 			long value = ImageEntity.count("siteUrl = ? and imageUrl = ?", siteUrl, imageUrl);
 
