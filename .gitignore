@@ -20,3 +20,8 @@ guice-1.2
 target
 target/
 */target/**
+
+#Idea 
+*.ipr
+*.iml
+.idea
