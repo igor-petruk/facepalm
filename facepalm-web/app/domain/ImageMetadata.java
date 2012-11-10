@@ -1,6 +1,6 @@
 package domain;
 
-public final class ImageMetadata {
+public class ImageMetadata {
 	
 	private String siteUrl, imageUrl;
 	
