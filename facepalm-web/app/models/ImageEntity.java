@@ -1,31 +1,16 @@
 package models;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import javax.persistence.PrePersist;
 
 import play.db.jpa.Model;
 
 @Entity
-@Access(AccessType.FIELD)
-
-//@NamedQueries(value = {
-//		@NamedQuery(name = ImageEntity.COUNT_QUERY, query = "select count(ImageEntity) from ImageEntity ie where ie.siteUrl = :siteUrl and ie.imageUrl = :imageUrl"),
-//		@NamedQuery(name = "likedImagesByUserQuery", query = "select ImageEntity from ImageEntity ie where ie.userToken = :userToken"),
-//		@NamedQuery(name = "likedImagesOnSiteCountQuery", query = "select count(*) from ImageEntity ie where ie.siteUrl = :siteUrl"),
-//		@NamedQuery(name = "likedImagesOnSiteQuery", query = "select ImageEntity from ImageEntity ie where ie.siteUrl = :siteUrl")
-//})
-
-public class ImageEntity extends Model {
+public class ImageEntity extends Model implements Comparable<ImageEntity> {
 	
-	public static final String COUNT_QUERY = "countQuery";
-
 	@Column
 	String siteUrl;
 	
@@ -35,9 +20,12 @@ public class ImageEntity extends Model {
 	@Column
 	String userToken;
 	
+	@Column
+	Date date;
+	
 	public ImageEntity()
 	{
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	public void setId(Long id)
@@ -58,6 +46,16 @@ public class ImageEntity extends Model {
 	public void setUserToken(String userToken)
 	{
 		this.userToken = userToken;
+	}
+	
+	@PrePersist
+	public void setDate(Date date)
+	{
+		if ( date == null){
+			this.date = new Date();
+		} else {
+			this.date = date;
+		}
 	}
 
 	@Override
@@ -100,6 +98,12 @@ public class ImageEntity extends Model {
 		} else if ( !userToken.equals(other.userToken) )
 			return false;
 		return true;
+	}
+
+	@Override
+	public int compareTo(ImageEntity o)
+	{
+		return date.compareTo(o.date);
 	}
 	
 }

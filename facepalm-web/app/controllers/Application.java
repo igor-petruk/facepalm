@@ -1,22 +1,16 @@
 package controllers;
 
-import javax.persistence.TypedQuery;
+import java.util.Collections;
+import java.util.List;
 
 import models.ImageEntity;
-import play.Logger;
-import play.db.jpa.JPA;
+import models.UserEntity;
 import play.modules.facebook.FbGraph;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Http.Response;
 import play.mvc.Scope.Session;
-
-import com.restfb.FacebookClient;
-import com.restfb.exception.FacebookOAuthException;
-import com.restfb.types.User;
-
 import domain.JsonResponse;
-import domain.LikeRepository;
 import domain.LoginManager;
 import domain.SocialApplication;
 
@@ -26,32 +20,37 @@ public class Application extends Controller {
 
 	public static void index()
 	{
-		try {
-			FacebookClient fbClient = FbGraph.getFacebookClient();
-			User profile = fbClient.fetchObject("me", com.restfb.types.User.class);
-			Logger.info("profile=%s", profile.getName());
-
-            Session.current().put("firstName", profile.getFirstName());
-			user(profile.getId());
-
-		} catch (Exception ex) {
-			// not logged in, show button
-			login();
+		if( LoginManager.isLoggedIn(APP, session.current(), false) ){
+			String uid = LoginManager.userId(APP, session.current() ); 
+			user ( uid );
+		} else {
+			render();
 		}
 	}
 
-	public static void user(String id)
+	public static void user(String uid)
 	{
-		render();
+		UserEntity user = UserEntity.findById(uid);
+		if( user != null ){
+			List<ImageEntity> likeSet = ImageEntity.find("userToken = :1", uid).fetch(); 
+			Collections.sort(likeSet);
+			
+			int size = 10;
+			if( size > likeSet.size() ){
+				size = likeSet.size();
+			}
+			List<ImageEntity> cutList = likeSet.subList(0, size);
+			
+			render( user,  cutList );
+			
+		} else{
+			index();
+		}
 	}
 
 	public static void login()
 	{
-		if ( "check is login".equals("login") ) {
-
-		} else {
-			render();
-		}
+		render();
 	}
 
 	public static void miniLogin(String siteUrl, String imageUrl)
@@ -63,8 +62,8 @@ public class Application extends Controller {
 	public static void count(String siteUrl, String imageUrl)
 	{
 		boolean wasLiked = false;
-		if ( LoginManager.isLoggedInSoft(APP, Session.current()) ) {
-			String uToken = LoginManager.loggedUserToken(APP, Session.current());
+		if ( LoginManager.isLoggedIn(APP, Session.current(), false) ) {
+			String uToken = LoginManager.userId(APP, Session.current());
 			ImageEntity ie = ImageEntity.find("siteUrl = ? and imageUrl = ? and userToken = ?", siteUrl, imageUrl, uToken)
 					.first();
 			wasLiked = ie != null;
@@ -82,11 +81,13 @@ public class Application extends Controller {
 
 		Session s = Session.current();
 
-		if ( LoginManager.isLoggedInMandatory(APP, s) ) {
+		if ( LoginManager.isLoggedIn(APP, s, true) ) {
 			
-			String uToken = LoginManager.loggedUserToken(APP, Session.current());
+			String uToken = LoginManager.userId(APP, Session.current());
 			ImageEntity ie = ImageEntity.find("siteUrl = ? and imageUrl = ? and userToken = ?", siteUrl, imageUrl, uToken)
 					.first();
+			
+			boolean wasLiked = false;
 			
 			if( ie == null){	// new like from this user 
 
@@ -94,9 +95,11 @@ public class Application extends Controller {
 
 				ieNew.setSiteUrl(siteUrl);
 				ieNew.setImageUrl(imageUrl);
-				ieNew.setUserToken(LoginManager.loggedUserToken(APP, s));
+				ieNew.setUserToken(LoginManager.userId(APP, s));
 
 				ieNew.save();
+				
+				wasLiked = true;
 
 			} else {	// unlike 
 				ie.delete();
@@ -104,7 +107,7 @@ public class Application extends Controller {
 			
 			long value = ImageEntity.count("siteUrl = ? and imageUrl = ?", siteUrl, imageUrl);
 
-			String countResult = JsonResponse.getCount(value, true);
+			String countResult = JsonResponse.getCount(value, wasLiked);
 
 			renderJSON(countResult);
 				
@@ -116,7 +119,7 @@ public class Application extends Controller {
 
 	public static void facebookLogout()
 	{
-		Session.current().remove("username");
+		Session.current().remove( APP.sessionIdKey() );
 		FbGraph.destroySession();
 		index();
 	}
@@ -125,10 +128,5 @@ public class Application extends Controller {
 	{
 		render();
 	}
-
-	public static void reset()
-	{
-		Logger.info("Like repository is being cleared");
-		LikeRepository.reset();
-	}
+	
 }

@@ -6,15 +6,26 @@ import play.mvc.Scope.Session;
 
 public class LoginManager {
 	
-	public static boolean isLoggedInMandatory(SocialApplication app, Session currentSession){
-		return app.isLoggedIn(currentSession, false);
+	public static boolean isLoggedIn(SocialApplication app, Session currentSession, boolean forceLogon){
+		if( forceLogon ){
+			return checkAndForceLogin(app, currentSession);
+		} else {
+			return gentleCheckIfUserIsLogged(app, currentSession);
+		}
 	}
 	
-	public static boolean isLoggedInSoft(SocialApplication app, Session currentSession){
-		return app.isLoggedIn(currentSession, true);
+	private static boolean checkAndForceLogin(SocialApplication app, Session currentSession){
+		if( !app.loggedIn(currentSession) ){
+			app.login(currentSession);
+		}
+		return app.loggedIn(currentSession);
 	}
 	
-	public static String loggedUserToken(SocialApplication app, Session currentSession){
+	private static boolean gentleCheckIfUserIsLogged(SocialApplication app, Session currentSession){
+		return app.loggedIn(currentSession);
+	}
+	
+	public static String userId(SocialApplication app, Session currentSession){
 		return currentSession.get( app.sessionIdKey() );
 	}
 	

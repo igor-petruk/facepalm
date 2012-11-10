@@ -11,42 +11,23 @@ public enum SocialApplication
 {
 	FACEBOOK {
 		@Override
-		public boolean isLoggedIn(Session currentSession, boolean softCheck)
+		public boolean loggedIn(Session currentSession)
 		{
-			boolean isLogged = true;
-
-			if ( softCheck ) {
-				if ( !currentSession.contains(sessionIdKey()) ) {
-
-					try {
-						FacebookClient fbClient = FbGraph.getFacebookClient();
-						User profile = fbClient.fetchObject("me", com.restfb.types.User.class);
-						isLogged = profile != null;
-
-						currentSession.put(sessionIdKey(), profile.getId());
-
-					} catch (Exception e) {
-						Logger.warn(e, "Current user is not logged in %s", this.name());
-						isLogged = false;
-					}
-				}
-
-			} else {
-
-				try {
-					FacebookClient fbClient = FbGraph.getFacebookClient();
-					User profile = fbClient.fetchObject("me", com.restfb.types.User.class);
-					isLogged = profile != null;
-
+			return currentSession.contains( sessionIdKey() );
+		}			
+		
+		@Override
+		public void login(Session currentSession)
+		{
+			try {
+				FacebookClient fbClient = FbGraph.getFacebookClient();
+				User profile = fbClient.fetchObject("me", com.restfb.types.User.class);
+				if(profile != null){
 					currentSession.put(sessionIdKey(), profile.getId());
-
-				} catch (Exception e) {
-					Logger.warn(e, "Current user is not logged in %s", this.name());
-					isLogged = false;
 				}
-
+			} catch (Exception e) {
+				Logger.warn(e, "Current user is not logged in %s", this.name());
 			}
-			return isLogged;
 		}
 
 		@Override
@@ -56,7 +37,9 @@ public enum SocialApplication
 		}
 	};
 
-	public abstract boolean isLoggedIn(Session currentSession, boolean softCheck);
+	public abstract boolean loggedIn(Session currentSession);
+	
+	public abstract void login(Session currentSession);
 
 	public abstract String sessionIdKey();
 }
