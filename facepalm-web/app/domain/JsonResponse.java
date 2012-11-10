@@ -6,4 +6,8 @@ public class JsonResponse {
 		return String.format("{\"count\": %d}", count);
 	}
 	
+	public static String getCount(int count, boolean isLoggedIn){
+		return String.format("{\"count\":%d, \"loggedIn:\"%s}", count, isLoggedIn ? "true" : "false" );
+	}
+	
 }

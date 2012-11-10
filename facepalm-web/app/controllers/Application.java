@@ -29,7 +29,11 @@ public class Application extends Controller {
 	{
 		Logger.info("Site url : %s image url : %s", siteUrl, imageUrl);
 		
-		String countResult = JsonResponse.getCount(0);
+		Session s = Session.current();
+		SocialApplication app = SocialApplication.FACEBOOK;
+		boolean isLoogedIn = LoginManager.isLoggedIn(app, s);
+		
+		String countResult = JsonResponse.getCount(0, isLoogedIn);
 		
 		renderJSON(countResult);
 	}
@@ -45,7 +49,9 @@ public class Application extends Controller {
 			
 			Integer likeCount = LikeRepository.like(siteUrl, imageUrl);
 			
-			renderJSON(likeCount);
+			String countResult = JsonResponse.getCount(likeCount, true);
+			
+			renderJSON(countResult);
 			
 		} else {
 			Response.current().status = Http.StatusCode.FORBIDDEN;

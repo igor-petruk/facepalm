@@ -8,6 +8,7 @@ GET     /index/{userMail}                            Application.index
 GET     /users                                       Application.users
 GET		/count/{siteUrl}/{imageUrl}					 Application.count
 POST	/like/{siteUrl}/{imageUrl}					 Application.like
+GET		/reset										 Application.reset
 
 # Ignore favicon requests
 GET     /favicon.ico                            404
