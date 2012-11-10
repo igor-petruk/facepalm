@@ -3,3 +3,4 @@
 require:
     - play
     - play -> fbgraph 0.4
+    - play -> secure
