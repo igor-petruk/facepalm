@@ -8,10 +8,24 @@
         #{get 'moreStyles' /}
         <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.png'}">
         <script src="@{'/public/javascripts/jquery-1.8.2.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+        <script type="text/javascript" src="https://connect.facebook.net/en_US/all.js"></script>
+        <script>
+        
+			FB.init({
+				appId : 422753584444343,
+				status : true,
+				cookie : true,
+				xfbml : true,
+				frictionlessRequests : true,
+				oauth : true
+			});
+		
+        </script>
         #{get 'moreScripts' /}
         
     </head>
-    <body>      
+    <body>
+    	<div id="fb-root"></div> 
        <h1>Hackaton - Facepalm.com (Like any content on the net)</h>
        #{doLayout /}	
 		

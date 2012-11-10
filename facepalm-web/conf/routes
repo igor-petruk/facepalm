@@ -4,7 +4,8 @@
 
 # Home page
 GET     /index                                       Application.index
-GET     /index/{userMail}                            Application.index
+GET     /user/{id}									 Application.user
+GET     /login										 Application.login
 GET     /users                                       Application.users
 
 # Ignore favicon requests
