@@ -1,8 +1,16 @@
 #{extends 'main.html' /}
 #{set title:'Home' /}
 
-<h2>This is mini login to facebook</h2>
-<div id="fb_login"> <fb:login-button onlogin="facebookLogin();"></fb:login-button> </div>
+#{set 'moreStyles'}
+    #{stylesheet 'miniLogin.css' /}
+#{/set}
+
+<div style="padding-left: 30px;">
+    <h3 style="text-align: center">Please login</h3>
+    <div id="fb_login" style="text-align: center;padding-top: 50px;">
+        <fb:login-button size="xlarge" onlogin="facebookLogin();"></fb:login-button>
+    </div>
+</div>
 
 <script type="text/javascript">
    			 function facebookLogin() {      		  
