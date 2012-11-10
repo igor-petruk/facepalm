@@ -1,14 +1,8 @@
-# Routes
-# This file defines all application routes (Higher priority routes first)
-# ~~~~
+GET     /                                   		Application.index
+GET		/count/{siteUrl}/{imageUrl}					Application.count
+GET		/like/{siteUrl}/{imageUrl}/{logonUserId}	Application.like
 
-# Home page
-GET     /                                       Application.index
-
-# Ignore favicon requests
 GET     /favicon.ico                            404
-
-# Map static resources from the /app/public folder to the /public path
 GET     /public/                                staticDir:public
 
 # Catch all
