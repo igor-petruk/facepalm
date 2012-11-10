@@ -1,8 +1,16 @@
 #{extends 'main.html' /}
 #{set title:'Home' /}
 
-<h2>This is mini login to facebook</h2>
-<div id="fb_login"> <fb:login-button onlogin="facebookLogin();"></fb:login-button> </div>
+#{set 'moreStyles'}
+    #{stylesheet 'miniLogin.css' /}
+#{/set}
+
+<div style="padding-left: 30px;">
+    <h3 style="text-align: center">Please login</h3>
+    <div id="fb_login" style="text-align: center;padding-top: 50px;">
+        <fb:login-button size="xlarge" onlogin="facebookLogin();"></fb:login-button>
+    </div>
+</div>
 
 <script type="text/javascript">
    			 function facebookLogin() {      		  
@@ -10,8 +18,7 @@
            			 if (response.status === 'connected') {
            				 console.log("resp status=connected");
              		    // the user is logged in and connected to your app
-                        addCounter(${sUrl},${iUrl});
-                       window.close();
+                        addCounter(encodeURIComponent("${siteUrl}"),encodeURIComponent("${imageUrl}"));
 
          		   } else {
                 	   window.location = "@{Application.facebookLogout()}";
@@ -21,7 +28,22 @@
 
                 var addCounter = function(sUrl,iUrl) {
                     var userAction = #{jsAction @Application.like(':siteUrl',":imageUrl") /}
-                    $.post.( userAction({siteUrl: sUrl,imageUrl:iUrl}));
+
+                    var url = userAction({siteUrl: sUrl,imageUrl:iUrl});
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        dataType: "json",
+                        success: function(data, status) {
+                            window.close();
+                        },
+                        error: function(jqXHR, textStatus, errorThrown){
+                            if (jqXHR.status==403){
+                                window.close();
+                            }
+                        }
+                    });
+
                 }
 </script>
 

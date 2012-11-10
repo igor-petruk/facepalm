@@ -55,8 +55,7 @@ public class Application extends Controller {
 
 	public static void miniLogin(String siteUrl, String imageUrl)
 	{
-		boolean isShowLoginButton = true;
-		render(isShowLoginButton);
+		render(siteUrl,imageUrl);
 	}
 
 	public static void count(String siteUrl, String imageUrl)
