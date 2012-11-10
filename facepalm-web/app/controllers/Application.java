@@ -1,9 +1,11 @@
 package controllers;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import models.ImageEntity;
+import models.Pair;
 import models.UserEntity;
 import play.modules.facebook.FbGraph;
 import play.mvc.Controller;
@@ -41,11 +43,21 @@ public class Application extends Controller {
 			}
 			List<ImageEntity> cutList = likeSet.subList(0, size);
 			
-			render( user,  cutList );
+			List<Pair> imageWithCounterSet = new ArrayList<Pair>(cutList.size());
+			
+			for( ImageEntity ie : cutList){
+				imageWithCounterSet.add( new Pair(ie, getLikeCount(ie)));
+		}
+			
+			render( user,  imageWithCounterSet );
 			
 		} else{
 			index();
 		}
+	}
+	
+	private static long getLikeCount( ImageEntity ie ){
+		return ImageEntity.count(ie.getSiteUrl(), ie.getImageUrl());
 	}
 
 	public static void login()
