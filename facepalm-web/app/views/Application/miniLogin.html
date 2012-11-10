@@ -20,7 +20,7 @@
     	     }
 
                 var addCounter = function(sUrl,iUrl) {
-                    var userAction = #{jsAction @Application.show(':siteUrl',":imageUrl") /}
+                    var userAction = #{jsAction @Application.like(':siteUrl',":imageUrl") /}
                     $.post.( userAction({siteUrl: sUrl,imageUrl:iUrl}));
                 }
 </script>

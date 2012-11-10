@@ -11,11 +11,27 @@ public enum SocialApplication
 {
 	FACEBOOK {
 		@Override
-		public boolean isLoggedIn(Session currentSession)
+		public boolean isLoggedIn(Session currentSession, boolean softCheck)
 		{
 			boolean isLogged = true;
 
-			if ( !currentSession.contains(sessionIdKey()) ) {
+			if ( softCheck ) {
+				if ( !currentSession.contains(sessionIdKey()) ) {
+
+					try {
+						FacebookClient fbClient = FbGraph.getFacebookClient();
+						User profile = fbClient.fetchObject("me", com.restfb.types.User.class);
+						isLogged = profile != null;
+
+						currentSession.put(sessionIdKey(), profile.getId());
+
+					} catch (Exception e) {
+						Logger.warn(e, "Current user is not logged in %s", this.name());
+						isLogged = false;
+					}
+				}
+
+			} else {
 
 				try {
 					FacebookClient fbClient = FbGraph.getFacebookClient();
@@ -28,6 +44,7 @@ public enum SocialApplication
 					Logger.warn(e, "Current user is not logged in %s", this.name());
 					isLogged = false;
 				}
+
 			}
 			return isLogged;
 		}
@@ -39,7 +56,7 @@ public enum SocialApplication
 		}
 	};
 
-	public abstract boolean isLoggedIn(Session currentSession);
+	public abstract boolean isLoggedIn(Session currentSession, boolean softCheck);
 
 	public abstract String sessionIdKey();
 }

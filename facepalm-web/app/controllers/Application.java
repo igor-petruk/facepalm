@@ -64,7 +64,7 @@ public class Application extends Controller {
 	{
 
 		boolean wasLiked = false;
-		if ( LoginManager.isLoggedIn(APP, Session.current()) ) {
+		if ( LoginManager.isLoggedInSoft(APP, Session.current()) ) {
 			String uToken = LoginManager.loggedUserToken(APP, Session.current());
 			ImageEntity ie = ImageEntity.find("siteUrl = ? and imageUrl = ? and userToken = ?", siteUrl, imageUrl, uToken)
 					.first();
@@ -83,27 +83,33 @@ public class Application extends Controller {
 
 		Session s = Session.current();
 
-		if ( LoginManager.isLoggedIn(APP, s) ) {
+		if ( LoginManager.isLoggedInMandatory(APP, s) ) {
+			
+			String uToken = LoginManager.loggedUserToken(APP, Session.current());
+			ImageEntity ie = ImageEntity.find("siteUrl = ? and imageUrl = ? and userToken = ?", siteUrl, imageUrl, uToken)
+					.first();
+			
+			if( ie == null){	// new like from this user 
 
-			ImageEntity ie = new ImageEntity();
+				ImageEntity ieNew = new ImageEntity();
 
-			ie.setSiteUrl(siteUrl);
-			ie.setImageUrl(imageUrl);
-			ie.setUserToken(LoginManager.loggedUserToken(APP, s));
+				ieNew.setSiteUrl(siteUrl);
+				ieNew.setImageUrl(imageUrl);
+				ieNew.setUserToken(LoginManager.loggedUserToken(APP, s));
 
-			validation.valid(ie);
-			if ( validation.hasErrors() ) {
+				ieNew.save();
 
-				ie.save();
-
-				long value = ImageEntity.count("siteUrl = ? and imageUrl = ?", siteUrl, imageUrl);
-
-				String countResult = JsonResponse.getCount(value, true);
-
-				renderJSON(countResult);
-			} else {
-				Response.current().status = Http.StatusCode.INTERNAL_ERROR;
+			} else {	// unlike 
+				ie.delete();
 			}
+
+			
+			long value = ImageEntity.count("siteUrl = ? and imageUrl = ?", siteUrl, imageUrl);
+
+			String countResult = JsonResponse.getCount(value, true);
+
+			renderJSON(countResult);
+				
 		} else {
 			Response.current().status = Http.StatusCode.FORBIDDEN;
 		}
