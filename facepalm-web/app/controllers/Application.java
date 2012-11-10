@@ -30,10 +30,9 @@ public class Application extends Controller {
 			FacebookClient fbClient = FbGraph.getFacebookClient();
 			User profile = fbClient.fetchObject("me", com.restfb.types.User.class);
 			Logger.info("profile=%s", profile.getName());
-			String uid = profile.getId() + " ";
-			String name = profile.getFirstName();
-			Session.current().put("username", uid);
-			user(profile.getName(), profile.getId());
+
+            Session.current().put("firstName", profile.getFirstName());
+			user(profile.getId());
 
 		} catch (Exception ex) {
 			// not logged in, show button
@@ -41,9 +40,9 @@ public class Application extends Controller {
 		}
 	}
 
-	public static void user(String name, String id)
+	public static void user(String id)
 	{
-		render(name, id);
+		render();
 	}
 
 	public static void login()
