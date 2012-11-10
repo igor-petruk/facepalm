@@ -1,6 +1,10 @@
 package controllers;
 
+import javax.persistence.TypedQuery;
+
+import models.ImageEntity;
 import play.Logger;
+import play.db.jpa.JPA;
 import play.modules.facebook.FbGraph;
 import play.mvc.Controller;
 import play.mvc.Http;
@@ -18,84 +22,109 @@ import domain.SocialApplication;
 
 public class Application extends Controller {
 
-	public static void index() {
-		try{
+	static SocialApplication APP = SocialApplication.FACEBOOK;
+
+	public static void index()
+	{
+		try {
 			FacebookClient fbClient = FbGraph.getFacebookClient();
 			User profile = fbClient.fetchObject("me", com.restfb.types.User.class);
 			Logger.info("profile=%s", profile.getName());
-            String uid = profile.getId()+" ";
-            String name = profile.getFirstName();
-            Session.current().put("username", uid);
-            user(profile.getName(),profile.getId());
+			String uid = profile.getId() + " ";
+			String name = profile.getFirstName();
+			Session.current().put("username", uid);
+			user(profile.getName(), profile.getId());
 
-        }catch(Exception ex){
-			//not logged in, show button	
+		} catch (Exception ex) {
+			// not logged in, show button
 			login();
-		}	
-	}
-	
-	public static void user(String name,String id){
-		render(name,id);
-	}
-	
-
-	public static void login(){
-        if("check is login".equals("login")){
-
-        }else{
-		    render();
-        }
+		}
 	}
 
-    public static void miniLogin(String siteUrl, String imageUrl){
-        boolean isShowLoginButton=true;
-        render(isShowLoginButton);
-    }
-
-
-    public static void count(String siteUrl, String imageUrl)
+	public static void user(String name, String id)
 	{
-		Logger.info("Site url : %s image url : %s", siteUrl, imageUrl);
-		
-		boolean isLoogedIn = true;
-		Integer value = LikeRepository.getLikeCount(siteUrl, imageUrl);
-		String result = JsonResponse.getCount(value, isLoogedIn);
-		
+		render(name, id);
+	}
+
+	public static void login()
+	{
+		if ( "check is login".equals("login") ) {
+
+		} else {
+			render();
+		}
+	}
+
+	public static void miniLogin(String siteUrl, String imageUrl)
+	{
+		boolean isShowLoginButton = true;
+		render(isShowLoginButton);
+	}
+
+	public static void count(String siteUrl, String imageUrl)
+	{
+
+		boolean wasLiked = false;
+		if ( LoginManager.isLoggedIn(APP, Session.current()) ) {
+			String uToken = LoginManager.loggedUserToken(APP, Session.current());
+			ImageEntity ie = ImageEntity.find("siteUrl = ? and imageUrl = ? and userToken = ?", siteUrl, imageUrl, uToken)
+					.first();
+			wasLiked = ie != null;
+		}
+
+		long value = ImageEntity.count("siteUrl = ? and imageUrl = ?", siteUrl, imageUrl);
+
+		String result = JsonResponse.getCount(value, wasLiked);
+
 		renderJSON(result);
 	}
 
 	public static void like(String siteUrl, String imageUrl)
 	{
-		Logger.info("Site url : %s image url : %s", siteUrl, imageUrl);
-		
+
 		Session s = Session.current();
-		SocialApplication app = SocialApplication.FACEBOOK;
-		
-		if ( LoginManager.isLoggedIn(app, s) ){
-			
-			Integer likeCount = LikeRepository.like(siteUrl, imageUrl);
-			
-			String countResult = JsonResponse.getCount(likeCount, true);
-			
-			renderJSON(countResult);
-			
+
+		if ( LoginManager.isLoggedIn(APP, s) ) {
+
+			ImageEntity ie = new ImageEntity();
+
+			ie.setSiteUrl(siteUrl);
+			ie.setImageUrl(imageUrl);
+			ie.setUserToken(LoginManager.loggedUserToken(APP, s));
+
+			validation.valid(ie);
+			if ( validation.hasErrors() ) {
+
+				ie.save();
+
+				long value = ImageEntity.count("siteUrl = ? and imageUrl = ?", siteUrl, imageUrl);
+
+				String countResult = JsonResponse.getCount(value, true);
+
+				renderJSON(countResult);
+			} else {
+				Response.current().status = Http.StatusCode.INTERNAL_ERROR;
+			}
 		} else {
 			Response.current().status = Http.StatusCode.FORBIDDEN;
 		}
 
 	}
 
-	public static void facebookLogout() {
+	public static void facebookLogout()
+	{
 		Session.current().remove("username");
 		FbGraph.destroySession();
 		index();
 	}
-	
-	public static void users(){
+
+	public static void users()
+	{
 		render();
 	}
-	
-	public static void reset(){
+
+	public static void reset()
+	{
 		Logger.info("Like repository is being cleared");
 		LikeRepository.reset();
 	}
