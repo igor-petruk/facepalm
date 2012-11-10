@@ -1,0 +1,21 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+<h2>This is normal login with facebook</h2>
+
+<div id="fb_login"> <fb:login-button onlogin="facebookLogin();"></fb:login-button> </div>
+
+<script type="text/javascript">
+   			 function facebookLogin() {      		  
+       			 FB.getLoginStatus(function(response) {       				
+           			 if (response.status === 'connected') {
+           				 console.log("resp status=connected");
+             		   // the user is logged in and connected to your app
+             		   window.location = "@{Application.index()}";
+         		   } else {
+                	   window.location = "@{Application.facebookLogout()}";
+            		}
+         	     });
+    	     }
+		</script>
+
