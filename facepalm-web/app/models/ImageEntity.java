@@ -26,10 +26,6 @@ public class ImageEntity extends Model {
 	
 	public static final String COUNT_QUERY = "countQuery";
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	long id;
-	
 	@Column
 	String siteUrl;
 	
@@ -42,6 +38,11 @@ public class ImageEntity extends Model {
 	public ImageEntity()
 	{
 		// TODO Auto-generated constructor stub
+	}
+	
+	public void setId(Long id)
+	{
+		this.id = id;
 	}
 
 	public void setSiteUrl(String siteUrl)
