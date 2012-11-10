@@ -11,6 +11,7 @@ import com.restfb.FacebookClient;
 import com.restfb.types.User;
 
 import domain.JsonResponse;
+import domain.LikeRepository;
 import domain.LoginManager;
 import domain.SocialApplication;
 
@@ -26,7 +27,7 @@ public class Application extends Controller {
 	
 	public static void count(String siteUrl, String imageUrl)
 	{
-		Logger.info(">>> count <<< site url : %s image url : %s", siteUrl, imageUrl);
+		Logger.info("Site url : %s image url : %s", siteUrl, imageUrl);
 		
 		String countResult = JsonResponse.getCount(0);
 		
@@ -35,10 +36,14 @@ public class Application extends Controller {
 
 	public static void like(String siteUrl, String imageUrl)
 	{
+		Logger.info("Site url : %s image url : %s", siteUrl, imageUrl);
+		
 		Session s = Session.current();
 		SocialApplication app = SocialApplication.FACEBOOK;
 		
 		if ( LoginManager.isLoggedIn(app, s) ){
+			
+			LikeRepository.like(siteUrl, imageUrl);
 			
 		} else {
 			Response.current().status = Http.StatusCode.FORBIDDEN;
