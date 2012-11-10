@@ -1,10 +1,26 @@
 
-
-<!--
- 
-#{extends 'main.html' /}
 #{set title:'Home' /}
 
-#{welcome /}
+<h2>Index.me</h2>
 
--->
+#{fbg.scriptAsync /}  
+<fb:login-button onlogin="facebookLogin();"></fb:login-button>
+       
+       <script type="text/javascript">
+   			 function facebookLogin() {
+      		  // get current login status from facebook.com
+      		  console.log("facebook login function");
+       			 FB.getLoginStatus(function(response) {
+       				console.log("resp status=uncnown");
+           			 if (response.status === 'connected') {
+           				 console.log("resp status=connected");
+             		   // the user is logged in and connected to your app
+             		   window.location = "@{Application.facebookLogin()}";
+         		   } else {
+                	   window.location = "@{Application.facebookLogout()}";
+            		}
+         	     });
+    	     }
+		</script>
+		
+		My Name is ${email}
