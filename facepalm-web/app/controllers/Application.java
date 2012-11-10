@@ -1,17 +1,20 @@
 package controllers;
 
-import play.*;
+import play.Logger;
 import play.modules.facebook.FbGraph;
-import play.modules.facebook.FbGraphException;
-import play.mvc.*;
+import play.mvc.Controller;
+import play.mvc.Http;
+import play.mvc.Http.Response;
 import play.mvc.Scope.Session;
 
-import java.util.*;
-
-import com.google.gson.JsonObject;
 import com.restfb.FacebookClient;
 import com.restfb.exception.FacebookOAuthException;
 import com.restfb.types.User;
+
+import domain.JsonResponse;
+import domain.LikeRepository;
+import domain.LoginManager;
+import domain.SocialApplication;
 
 public class Application extends Controller {
 
@@ -31,11 +34,45 @@ public class Application extends Controller {
 		render(name,id);
 	}
 	
+
 	public static void login(){
 		boolean isShowLoginButton=true;
 		render(isShowLoginButton);
 	}	
 	
+
+	public static void count(String siteUrl, String imageUrl)
+	{
+		Logger.info("Site url : %s image url : %s", siteUrl, imageUrl);
+		
+		boolean isLoogedIn = true;
+		Integer value = LikeRepository.getLikeCount(siteUrl, imageUrl);
+		String result = JsonResponse.getCount(value, isLoogedIn);
+		
+		renderJSON(result);
+	}
+
+	public static void like(String siteUrl, String imageUrl)
+	{
+		Logger.info("Site url : %s image url : %s", siteUrl, imageUrl);
+		
+		Session s = Session.current();
+		SocialApplication app = SocialApplication.FACEBOOK;
+		
+		if ( LoginManager.isLoggedIn(app, s) ){
+			
+			Integer likeCount = LikeRepository.like(siteUrl, imageUrl);
+			
+			String countResult = JsonResponse.getCount(likeCount, true);
+			
+			renderJSON(countResult);
+			
+		} else {
+			Response.current().status = Http.StatusCode.FORBIDDEN;
+		}
+
+	}
+
 
 	public static void facebookLogin() {
 		
@@ -55,8 +92,13 @@ public class Application extends Controller {
 		FbGraph.destroySession();
 		index();
 	}
+	
 	public static void users(){
 		render();
 	}
-
+	
+	public static void reset(){
+		Logger.info("Like repository is being cleared");
+		LikeRepository.reset();
+	}
 }
