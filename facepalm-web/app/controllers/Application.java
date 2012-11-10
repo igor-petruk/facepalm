@@ -43,7 +43,9 @@ public class Application extends Controller {
 		
 		if ( LoginManager.isLoggedIn(app, s) ){
 			
-			LikeRepository.like(siteUrl, imageUrl);
+			Integer likeCount = LikeRepository.like(siteUrl, imageUrl);
+			
+			renderJSON(likeCount);
 			
 		} else {
 			Response.current().status = Http.StatusCode.FORBIDDEN;
@@ -70,5 +72,10 @@ public class Application extends Controller {
 	
 	public static void users(){
 		render();
+	}
+	
+	public static void reset(){
+		Logger.info("Like repository is being cleared");
+		LikeRepository.reset();
 	}
 }
