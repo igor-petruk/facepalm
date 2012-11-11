@@ -1,0 +1,27 @@
+#{extends 'main.html' /}
+#{set 'moreStyles'}
+    #{stylesheet 'download.css' /}
+#{/set}
+
+<div id="facepalm-installation-block">
+    <h2>Installation instructions</h2>
+
+    <p class="lead">
+        1. Install <a href="https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo">TamperMonkey</a>
+    </p>
+    <p class="lead">
+        2. Install <a href="@{Application.script()}">Our userscript</a>
+    </p>
+</div>
+
+<div id="facepalm-installation-block-installed" style="display: none;">
+    <p align="center">
+        <h2>You have successfully installed user script</h2>
+    </p>
+    <p align="center">
+        <h1 style="color: #006400;">Enjoy ;)</h1>
+    </p>
+</div>
+
+
+

@@ -5,6 +5,7 @@
 # Home page
 GET     /?                                           Application.index
 GET     /index                                       Application.index
+GET     /download                                    Application.download
 GET     /script.user.js     					     Application.script
 GET     /{id}									     Application.user
 GET     /login     							         Application.login

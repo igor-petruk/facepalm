@@ -57,6 +57,9 @@
         $(link).text((!liked)?"Like":"Unlike")
     }
 
+    $('#facepalm-installation-block').css('display','none');
+    $('#facepalm-installation-block-installed').css('display','block');
+
     $('img').each(function() {
         if ($(this).width()<100||($(this).height()<100)){
             return;

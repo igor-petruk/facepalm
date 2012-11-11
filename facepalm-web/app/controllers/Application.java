@@ -131,7 +131,7 @@ public class Application extends Controller {
 			
 			if ( hasComment() ) {
 				String comment = getComment();
-				String photoId = session.get(imageUrl);
+				String photoId = session.get( asSesstionKey(imageUrl) );
 
 				FacebookClient fbClient = FbGraph.getFacebookClient();
 				fbClient.publish(photoId + "/comments", FacebookType.class, Parameter.with("message", comment));
@@ -151,7 +151,7 @@ public class Application extends Controller {
 					if ( photoId != null ){
 						
 						ieNew.save();	// store entity as far as an image is posted on APP
-						session.put(imageUrl, photoId);
+						session.put( asSesstionKey(imageUrl), photoId);
 						wasLiked = true;
 						
 					} 
@@ -172,6 +172,11 @@ public class Application extends Controller {
 
 		renderJSON(countResult);
 
+	}
+
+	private static String asSesstionKey(String imageUrl)
+	{
+		return "url_" + imageUrl.hashCode();
 	}
 
 	private static String postImageToApplication(SocialApplication app, ImageEntity ieNew)
@@ -218,8 +223,11 @@ public class Application extends Controller {
         response.setContentTypeIfNotSet("application/x-javascript");
 
         String baseUrl = request.getBase();
-        renderTemplate("script.js");
         render(baseUrl);
+    }
+
+    public static void download(){
+        render();
     }
 
 }
