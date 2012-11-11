@@ -61,10 +61,7 @@ public class Application extends Controller {
 
 	public static void user(String uid)
 	{
-        FacebookClient fbClient = FbGraph.getFacebookClient();
-        JsonObject photosConnection = fbClient.fetchObject("me/picture?type=large",JsonObject.class);
-        String firstPhotoUrl = photosConnection.getJsonObject("data").getJsonObject("url").toString();
-        Logger.info("photourl="+firstPhotoUrl);
+
 		UserEntity user = UserEntity.findById(uid);
 		if( user != null ){
 			List<ImageEntity> likeSet = ImageEntity.find("userToken = ?", uid).fetch();
@@ -90,7 +87,7 @@ public class Application extends Controller {
 	}
 	
 	private static long getLikeCount( ImageEntity ie ){
-		return ImageEntity.count(ie.getSiteUrl(), ie.getImageUrl());
+		return ImageEntity.count("siteUrl=? and imageUrl=?", ie.getSiteUrl(), ie.getImageUrl());
 	}
 
 	public static void login()

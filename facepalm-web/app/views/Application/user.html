@@ -12,6 +12,16 @@
         </div>
         <div class="span10">
             <h2>See your like streem</h2>
+
+
+
+
+        #{list items:imageWithCounterSet, as:'pr'}
+
+
+            ${pr.counter}
+            ${pr.imageEntity.getImageUrl()}
+        #{/list}
         </div>
     </div>
 </div>

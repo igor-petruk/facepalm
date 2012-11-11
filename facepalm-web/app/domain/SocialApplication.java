@@ -1,5 +1,6 @@
 package domain;
 
+import models.FqlUser;
 import models.UserEntity;
 import play.Logger;
 import play.modules.facebook.FbGraph;
@@ -7,6 +8,8 @@ import play.mvc.Scope.Session;
 
 import com.restfb.FacebookClient;
 import com.restfb.types.User;
+
+import java.util.List;
 
 public enum SocialApplication
 {
@@ -22,14 +25,18 @@ public enum SocialApplication
 		{
 			try {
 				FacebookClient fbClient = FbGraph.getFacebookClient();
-				User p = fbClient.fetchObject("me", com.restfb.types.User.class);
+                String query = "SELECT uid, first_name, last_name, pic_big FROM user where uid=me()";
+                List<FqlUser> users = fbClient.executeQuery(query, FqlUser.class);
+
 				
-				if( p != null ){
-					currentSession.put(sessionIdKey(), p.getId());
+				if( users != null ){
+					currentSession.put(sessionIdKey(), users.get(0).uid);
 					
-					if(UserEntity.hasNoUser(p.getId())){
-						UserEntity ue = UserEntity.valueOf(p.getId(), p.getFirstName(), p.getLastName(), 
-								"http://www.kleurprentjes.be/showimage.php?path=/mickey_mouse/Mickey-Mouse-kleurprentje-024.jpg");
+					if(UserEntity.hasNoUser(users.get(0).uid)){
+						UserEntity ue = UserEntity.valueOf(users.get(0).uid,
+                                users.get(0).first_name,
+                                users.get(0).last_name,
+                                users.get(0).pic_big);
 						ue.save();
 					}
 					
