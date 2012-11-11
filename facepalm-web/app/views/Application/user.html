@@ -1,27 +1,52 @@
-#{extends 'main.html' /}
+#{extends 'nav.html' /}
 #{set title:'Home' /}
 
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span2">
-            Your name =${user.firstName}
-            <br/>
-            Your id   =${user.appUserId}
-            <br/>
-            <img src="${user.pictureUrl}" />
+
+            <div class="thumbnail">
+                <img src="${user.pictureUrl}" />
+            </div>
+            <div>
+                <b>${user.firstName} ${user.secondName}</b>
+            </div>
+
         </div>
         <div class="span10">
-            <h2>See your like streem</h2>
+            <h3>Like streem</h3>
 
-
-
+          <div class="row-fluid">
 
         #{list items:imageWithCounterSet, as:'pr'}
 
+            <div class="thumbnail">
+                <div class="row-fluid">
+                    <div class="span2">
+                        <div class="thumbnail2">
+                            <img src="${pr.imageEntity.getImageUrl()}">
+                        </div>
+                    </div>
+                    <div class="span5">
+                        <a href="${pr.imageEntity.getImageUrl()}" class="Title">${pr.imageEntity.getSiteUrl()}</a>
+                        <p>
+                          <div> <i class="icon-heart"></i> ${pr.counter}</div>
+                           <div><b>Date was aded  is</b>  ${pr.imageEntity.date.toString()}</div>
+                        </p>
 
-            ${pr.counter}
-            ${pr.imageEntity.getImageUrl()}
+                    </div>
+
+                </div>
+            </div>
+
+            <div>
+               <p>
+
+               </p>
+            </div>
+
         #{/list}
+              </div>
         </div>
     </div>
 </div>
