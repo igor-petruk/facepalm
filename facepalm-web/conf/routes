@@ -5,7 +5,9 @@
 # Home page
 GET     /?                                           Application.index
 GET     /index                                       Application.index
-GET     /{id}									     Application.user
+GET     /login     							         Application.login
+GET     /user/{uid}/									 Application.user
+GET     /successful/									     Application.successful
 GET     /login     							         Application.login
 GET     /miniLogin/{siteUrl}/{imageUrl}	   	         Application.miniLogin
 

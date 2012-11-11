@@ -1,5 +1,7 @@
 package domain;
 
+import com.restfb.Parameter;
+import com.restfb.types.FacebookType;
 import models.UserEntity;
 import play.Logger;
 import play.modules.facebook.FbGraph;
@@ -21,12 +23,13 @@ public enum SocialApplication
 		public void login(Session currentSession)
 		{
 			try {
+                Logger.info("CHECK FORCE, AND PUSH TO DB");
 				FacebookClient fbClient = FbGraph.getFacebookClient();
 				User p = fbClient.fetchObject("me", com.restfb.types.User.class);
 				
 				if( p != null ){
 					currentSession.put(sessionIdKey(), p.getId());
-					
+                    fbClient.fetchObject("me/picture", FacebookType.class, Parameter.with("type","large"));
 					UserEntity ue = UserEntity.valueOf(p.getId(), p.getFirstName(), p.getLastName(), "http://grytsenko.com.ua/images/news/5541.jpg");
 					
 					ue.save();
