@@ -10,11 +10,11 @@ import play.db.jpa.Model;
 
 @Entity
 public class ImageEntity extends Model implements Comparable<ImageEntity> {
-
-    @Column(length = 4000)
+	
+	@Column(length = 4000)
 	String siteUrl;
-
-    @Column(length = 4000)
+	
+	@Column(length = 4000)
 	String imageUrl;
 	
 	@Column
@@ -134,7 +134,7 @@ public class ImageEntity extends Model implements Comparable<ImageEntity> {
 	@Override
 	public int compareTo(ImageEntity o)
 	{
-		return o.date.compareTo(date);
+		return date.compareTo(o.date);
 	}
 	
 }

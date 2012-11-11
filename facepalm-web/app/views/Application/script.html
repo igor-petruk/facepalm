@@ -1,18 +1,19 @@
 // ==UserScript==
-// @name myUserJS
+// @name facepalmJS
 // @description FacepalmJS
 // @author Super hackaton teams
 // @license MIT
 // @version 1.0
-// @require http://localhost:9000/public/javascripts/jquery-1.8.2.js
-// @require http://localhost:9000/public/javascripts/jquery.qtip.js
-// @resource qtipCSS http://localhost:9000/public/stylesheets/jquery.qtip.css
-// @resource bootstrapCSS http://localhost:9000/public/bootstrap/css/bootstrap.min.css
-// @resource userJSCSS http://localhost:9000/public/stylesheets/userjs.css
+// @require @@{'/public/javascripts/jquery-1.8.2.js'}
+// @require @@{'/public/javascripts/jquery.qtip.js'}
+// @resource qtipCSS @@{'/public/stylesheets/jquery.qtip.css'}
+// @resource bootstrapCSS @@{'/public/bootstrap/css/bootstrap.min.css'}
+// @resource userJSCSS @@{'/public/stylesheets/userjs.css'}
 // @include http://*
 // ==/UserScript==
 (function (window, undefined) {
     var w;
+
     if (typeof unsafeWindow != undefined) {
         w = unsafeWindow
     } else {
@@ -30,7 +31,7 @@
 
     function likeImage(imageUrl, link, liked, counterSpan, mainSpan, comment){
         $.ajax({
-            url: 'http://localhost:9000/like/'+encodeURIComponent(window.location.toString())+"/"+encodeURIComponent(imageUrl),
+            url: '${baseUrl}/like/'+encodeURIComponent(window.location.toString())+"/"+encodeURIComponent(imageUrl),
             type: 'POST',
             data: {
                 comment:comment
@@ -43,7 +44,7 @@
             error: function(jqXHR, textStatus, errorThrown){
                 if (jqXHR.status==403){
                     $(mainSpan).html($("<a>").text("Login").attr("href","#").on("click",function(event){
-                        var url = 'http://localhost:9000/miniLogin/'+encodeURIComponent(window.location.toString())+"/"+encodeURIComponent(imageUrl);
+                        var url = '${baseUrl}/miniLogin/'+encodeURIComponent(window.location.toString())+"/"+encodeURIComponent(imageUrl);
                         w.open(url,'loginWindow','height=300,width=400,left=200,top=200,scrollbars=0');
                         event.preventDefault ? event.preventDefault() : event.returnValue = false;
                     }));
@@ -63,7 +64,7 @@
 
         var imgSrc = $(this).attr("src");
 
-        var loader = $("<img>").attr("src","http://localhost:9000/public/images/ajax-loader.gif");
+        var loader = $("<img>").attr("src","${baseUrl}/public/images/ajax-loader.gif");
         var initialLoader = $("<span>").append(loader).append($("<span>").css("width",200));
 
         $(this).qtip({
@@ -71,7 +72,7 @@
             content:{
                 text: initialLoader, // The text to use whilst the AJAX request is loading
                 ajax: {
-                    url: 'http://localhost:9000/count/'+encodeURIComponent(window.location.toString())+"/"+encodeURIComponent(imgSrc), // URL to the local file
+                    url: '${baseUrl}/count/'+encodeURIComponent(window.location.toString())+"/"+encodeURIComponent(imgSrc), // URL to the local file
                     once: false,
                     cache: false,
                     type: 'GET', // POST or GET
@@ -79,7 +80,6 @@
                     success: function(data, status) {
                         var a = $("<a>");
                         var postSpan = $("<span>");
-
                         var liked = data.wasLiked=="true";
                         setLikeLinkName(a,liked);
                         var span = $("<span>");
@@ -89,39 +89,39 @@
                         span.append(postSpan);
                         this.set('content.text', span);
 
-                        a.on("click",function(e){
-                            //if (data.loggedIn=="true"){
-                            if (true){
-                                counter.html(loader);
-                                liked = !liked;
-                                if (liked){
-                                    var p = $("<p>");
-                                    var ta = $("<textarea>").attr("cols",40).attr("rows",5).css("width",200);
-                                    ta.addClass("styled");
-                                    var postButton = $("<a>").text("Comment");
-                                    postButton.addClass("postbutton");
-
-                                    $(ta).on("keydown", function(event){
-                                        if(event.keyCode === 10 || event.keyCode == 13 && event.ctrlKey){
-                                            likeImage(imgSrc, a,liked,counter, span, $(ta).val());
-                                            event.preventDefault ? event.preventDefault() : event.returnValue = false;
-                                            postSpan.html("");
-                                        }
-                                    });
-                                    postButton.on("click", function (event){
+                        var setupTextArea = function(){
+                            if (liked){
+                                var p = $("<p>");
+                                var ta = $("<textarea>").attr("cols",40).attr("rows",5).css("width",200);
+                                ta.addClass("styled");
+                                var postButton = $("<a>").text("Comment");
+                                postButton.addClass("postbutton");
+                                $(ta).on("keydown", function(event){
+                                    if(event.keyCode === 10 || event.keyCode == 13 && event.ctrlKey){
                                         likeImage(imgSrc, a,liked,counter, span, $(ta).val());
                                         event.preventDefault ? event.preventDefault() : event.returnValue = false;
-                                        postSpan.html("");
-                                    });
-                                    p.append(ta).append($("<br>")).append(postButton);
-                                    postSpan.append(p);
-
-                                }else{
-                                    postSpan.html("");
-                                }
-                                likeImage(imgSrc, a,liked,counter, span, null);
+                                        $(ta).val("");
+                                    }
+                                });
+                                postButton.on("click", function (event){
+                                    likeImage(imgSrc, a,liked,counter, span, $(ta).val());
+                                    event.preventDefault ? event.preventDefault() : event.returnValue = false;
+                                    $(ta).val("");
+                                });
+                                p.append(ta).append($("<br>")).append(postButton);
+                                postSpan.append(p);
                             }else{
+                                postSpan.html("");
                             }
+                        }
+
+                        setupTextArea();
+
+                        a.on("click",function(e){
+                            counter.html(loader);
+                            liked = !liked;
+                            setupTextArea();
+                            likeImage(imgSrc, a,liked,counter, span, null);
                         });
                     }
                 }
