@@ -41,9 +41,10 @@ public class Application extends Controller {
             UserEntity user = UserEntity.findById(uid);
             if(user==null){
                 Session.current().remove( APP.sessionIdKey());
+            }else{
+                Logger.info("Redirect to user page");
+                user ( uid );
             }
-            Logger.info("Redirect to user page");
-            user ( uid );
         }
 
             Logger.info("render index with welcome page");
@@ -163,7 +164,9 @@ public class Application extends Controller {
 						session.put( asSesstionKey(imageUrl), photoId);
 						wasLiked = true;
 						
-					} 
+					} else{
+                        Response.current().status = Http.StatusCode.FORBIDDEN;
+                    }
 
 				} else { // unlike
 					ie.delete();
@@ -191,8 +194,6 @@ public class Application extends Controller {
 	private static String postImageToApplication(SocialApplication app, ImageEntity ieNew)
 	{
 
-		FacebookClient fbClient = FbGraph.getFacebookClient();
-
 		String url = ieNew.getImageUrl();
 		if ( url.startsWith("//") ) {
 			url = "http:" + url;
@@ -206,6 +207,7 @@ public class Application extends Controller {
 		}
 		
 		try{
+            FacebookClient fbClient = FbGraph.getFacebookClient();
 			FacebookType publishPhotoResponse = fbClient.publish("me/feed", FacebookType.class,
 				Parameter.with("message", "Shared photo from " + ((domain == null) ? ieNew.getSiteUrl() : domain)),
 				Parameter.with("picture", url), Parameter.with("link", ieNew.getSiteUrl()));
