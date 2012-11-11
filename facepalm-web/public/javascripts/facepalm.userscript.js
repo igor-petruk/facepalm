@@ -57,6 +57,10 @@
     }
 
     $('img').each(function() {
+        if ($(this).width()<100||($(this).height()<100)){
+            return;
+        }
+
         var imgSrc = $(this).attr("src");
 
         var loader = $("<img>").attr("src","http://localhost:9000/public/images/ajax-loader.gif");
@@ -96,6 +100,7 @@
                                     ta.addClass("styled");
                                     var postButton = $("<a>").text("Comment");
                                     postButton.addClass("postbutton");
+
                                     $(ta).on("keydown", function(event){
                                         if(event.keyCode === 10 || event.keyCode == 13 && event.ctrlKey){
                                             likeImage(imgSrc, a,liked,counter, span, $(ta).val());
@@ -110,6 +115,7 @@
                                     });
                                     p.append(ta).append($("<br>")).append(postButton);
                                     postSpan.append(p);
+
                                 }else{
                                     postSpan.html("");
                                 }
