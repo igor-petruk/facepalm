@@ -38,17 +38,17 @@ public class Application extends Controller {
     {
         if( LoginManager.isLoggedIn(APP, session.current(), false) ){
             String uid = LoginManager.userId(APP, session.current() );
-            UserEntity user = UserEntity.findById(uid);
-            if(user==null){
-                Session.current().remove( APP.sessionIdKey());
-            }
+            //UserEntity user = UserEntity.findById(uid);
+            //if(user==null){
+             //   Session.current().remove( APP.sessionIdKey());
+            //}
             Logger.info("Redirect to user page");
             user ( uid );
         }
-        else {
+
             Logger.info("render index with welcome page");
             render();
-        }
+
     }
 
 	public static void user(String uid)
@@ -86,6 +86,15 @@ public class Application extends Controller {
 	{
 		render();
 	}
+
+    public static void successful(){
+        if( LoginManager.isLoggedIn(APP, session.current(), true) ){
+            String uid=LoginManager.userId(APP,session.current());
+            user(uid);
+        }
+        index();
+    }
+
 
 	public static void miniLogin(String siteUrl, String imageUrl)
 	{
@@ -213,6 +222,12 @@ public class Application extends Controller {
 		FbGraph.destroySession();
 		index();
 	}
+
+    public static void logout(){
+        Session.current().remove(APP.sessionIdKey());
+        FbGraph.destroySession();
+        render();
+    }
 
 	public static void users()
 	{

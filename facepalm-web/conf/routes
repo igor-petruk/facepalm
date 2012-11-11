@@ -7,11 +7,11 @@ GET     /?                                           Application.index
 GET     /index                                       Application.index
 GET     /download                                    Application.download
 GET     /script.user.js     					     Application.script
-GET     /{id}									     Application.user
 GET     /login     							         Application.login
-GET     /user/{uid}/									 Application.user
-GET     /successful									     Application.successful
-GET     /login     							         Application.login
+GET     /user/{uid}/								 Application.user
+GET     /successful									 Application.successful
+GET     /login/?     							         Application.login
+GET     /logout/?     							     Application.logout
 GET     /miniLogin/{siteUrl}/{imageUrl}	   	         Application.miniLogin
 
 GET     /users                                       Application.users

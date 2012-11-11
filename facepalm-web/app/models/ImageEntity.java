@@ -134,7 +134,7 @@ public class ImageEntity extends Model implements Comparable<ImageEntity> {
 	@Override
 	public int compareTo(ImageEntity o)
 	{
-		return date.compareTo(o.date);
+		return o.date.compareTo(date);
 	}
 	
 }
