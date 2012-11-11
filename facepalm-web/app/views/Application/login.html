@@ -1,5 +1,5 @@
 #{extends 'main.html' /}
-#{set title:'Home' /}
+#{set title:'Facepalm - share web with one click' /}
 
 #{if user}
     #{nav name:"${user.firstName} ${user.secondName}"  /}
@@ -8,9 +8,18 @@
     #{nav /}
 #{/else}
 
-<h2>Please login with facebook</h2>
+#{set 'moreStyles'}
+    #{stylesheet 'miniLogin.css' /}
+#{/set}
+#{navSimple /}
 
-<div id="fb_login"> <fb:login-button scope="email,publish_stream,user_photos" onlogin="facebookLogin();"></fb:login-button> </div>
+
+<div style="padding-left: 30px;">
+    <h3 style="text-align: center">Please login</h3>
+    <div id="fb_login" style="text-align: center;padding-top: 50px;">
+        <fb:login-button size="xlarge" scope="email,publish_stream,user_photos" onlogin="facebookLogin();"></fb:login-button>
+    </div>
+</div>
 
 <script type="text/javascript">
    			 function facebookLogin() {      		  

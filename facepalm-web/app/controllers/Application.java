@@ -104,7 +104,7 @@ public class Application extends Controller {
 	public static void count(String siteUrl, String imageUrl)
 	{
 		boolean wasLiked = false;
-		if ( LoginManager.isLoggedIn(APP, Session.current(), false) ) {
+		if ( LoginManager.isLoggedIn(APP, Session.current(), true) ) {
 			String uToken = LoginManager.userId(APP, Session.current());
 			ImageEntity ie = ImageEntity.find("siteUrl = ? and imageUrl = ? and userToken = ?", siteUrl, imageUrl, uToken)
 					.first();
@@ -136,7 +136,7 @@ public class Application extends Controller {
 	{
 		boolean wasLiked = false;
 		
-		if ( LoginManager.isLoggedIn(APP, Session.current(), true) ) {
+		if ( LoginManager.isLoggedIn(APP, Session.current(), false) ) {
 			
 			if ( hasComment() ) {
 				String comment = getComment();

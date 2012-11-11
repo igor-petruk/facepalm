@@ -1,11 +1,13 @@
 #{extends 'main.html' /}
-#{set title:'index' /}
+#{set title:'Facepalm - share web with one click' /}
 
-#{nav name:'Bob', actionLink: "@{Application.logout()}"  /}
+#{if user}
+    #{nav name:"${user.firstName} ${user.secondName}"  /}
+#{/if}
+#{else}
+    #{nav /}
+#{/else}
 
 <h1>Welcome to  Facepalm.com</h1>
 <h3>Like any content on the net(imgs, Links, Bold Text etc..)</h2>
-
-
-To Continue, please <a href="@{Application.login()}">Login</a>
 

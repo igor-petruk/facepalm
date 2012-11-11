@@ -1,7 +1,12 @@
 #{extends 'main.html' /}
-#{set title:'Home' /}
+#{set title:'Facepalm - share web with one click' /}
 
-#{nav name:"${user.firstName} ${user.secondName}", actionLink: '@{Application.logout()}'  /}
+#{if user}
+    #{nav name:"${user.firstName} ${user.secondName}", littlePic:"${user.pictureSquare}" /}
+#{/if}
+#{else}
+    #{nav /}
+#{/else}
 
 <div class="container-fluid">
     <div class="row-fluid">

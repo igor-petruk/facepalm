@@ -9,22 +9,21 @@
             </a>
             <a class="brand" href="/">The Facepalm</a>
 
-            <div class="nav-collapse">
-                <ul class="nav">
-                </ul>
-                <ul class="nav pull-right">
-                </ul>
-            </div>
 
-            <ul class="nav pull-right">
+                <a class="btn btn-primary facepalm-installation-block" href="@{Application.download()}">Download user script</a>
+
+             <ul class="nav pull-right">
 
             #{if _name}
+                <li><div class="thumbnail2">
+                    <img style="padding-top:7px" width="25px" height="25px" src="${_littlePic}">
+                </div></li>
                 <li><a href="#">${_name}</a></li>
             #{/if}
 
 
                 <li id="fat-menu" class="dropdown">
-                    <a href="#" id="drop3" role="button" class="dropdown-toggle" data-toggle="dropdown">Administration<b
+                    <a href="#" id="drop3" role="button" class="dropdown-toggle" data-toggle="dropdown">Menu<b
                             class="caret"></b></a>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
                     #{if _name}
