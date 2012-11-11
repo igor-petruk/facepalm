@@ -210,8 +210,11 @@ public class Application extends Controller {
         response.setContentTypeIfNotSet("application/x-javascript");
 
         String baseUrl = request.getBase();
-        renderTemplate("script.js");
         render(baseUrl);
+    }
+
+    public static void download(){
+        render();
     }
 
 }
