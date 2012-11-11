@@ -18,7 +18,7 @@ public enum SocialApplication
 		}			
 		
 		@Override
-		public void login(Session currentSession)
+		public boolean login(Session currentSession)
 		{
 			try {
 				FacebookClient fbClient = FbGraph.getFacebookClient();
@@ -33,8 +33,13 @@ public enum SocialApplication
 					
 				}
 			} catch (Exception e) {
+				
 				Logger.warn(e, "Current user is not logged in %s", this.name());
+				
+				return false;
 			}
+			
+			return true;
 		}
 
 		@Override
@@ -46,7 +51,7 @@ public enum SocialApplication
 
 	public abstract boolean loggedIn(Session currentSession);
 	
-	public abstract void login(Session currentSession);
+	public abstract boolean login(Session currentSession);
 
 	public abstract String sessionIdKey();
 }

@@ -15,8 +15,7 @@ public class LoginManager {
 	}
 	
 	private static boolean checkAndForceLogin(SocialApplication app, Session currentSession){
-		app.login(currentSession);
-		return app.loggedIn(currentSession);
+		return app.login(currentSession);
 	}
 	
 	private static boolean gentleCheckIfUserIsLogged(SocialApplication app, Session currentSession){
