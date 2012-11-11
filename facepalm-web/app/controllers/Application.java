@@ -14,6 +14,7 @@ import models.ImageEntity;
 import models.Pair;
 import models.UserEntity;
 import play.Logger;
+import play.Play;
 import play.modules.facebook.FbGraph;
 import play.mvc.Controller;
 import play.mvc.Http;
@@ -204,5 +205,13 @@ public class Application extends Controller {
 	{
 		render();
 	}
+
+    public static void script(){
+        response.setContentTypeIfNotSet("application/x-javascript");
+
+        String baseUrl = request.getBase();
+        renderTemplate("script.js");
+        render(baseUrl);
+    }
 
 }
