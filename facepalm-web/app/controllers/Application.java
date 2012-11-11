@@ -102,69 +102,66 @@ public class Application extends Controller {
 
 	static boolean hasComment()
 	{
-		return null == request.current().body;
+		String comment = request.params.get("comment");
+		return comment != null && comment.length() > 0;
 	}
 
 	static String getComment()
 	{
-		InputStream is = request.current().body;
-		InputStreamReader isr = new InputStreamReader(is);
-		BufferedReader br = new BufferedReader(isr);
-		String comment;
-		try {
-			comment = br.readLine();
-		} catch (IOException e) {
-			Logger.error(e, "Cannot read user's comment");
+		String comment = request.params.get("comment");
+		if ( comment == null || comment.length() == 0 )
 			return "";
-		}
 		return comment;
 	}
 
 	public static void like(String siteUrl, String imageUrl)
 	{
-		if ( hasComment() ) {
-			String comment = getComment();
-			String photoId = session.get(imageUrl);
+		boolean wasLiked = false;
+		
+		if ( LoginManager.isLoggedIn(APP, Session.current(), true) ) {
+			
+			if ( hasComment() ) {
+				String comment = getComment();
+				String photoId = session.get(imageUrl);
 
-			FacebookClient fbClient = FbGraph.getFacebookClient();
+				FacebookClient fbClient = FbGraph.getFacebookClient();
+				fbClient.publish(photoId + "/comments", FacebookType.class, Parameter.with("message", comment));
 
-			fbClient.publish(photoId + "/comments", FacebookType.class, Parameter.with("message", comment));
-
-		} else {
-
-			if ( LoginManager.isLoggedIn(APP, Session.current(), true) ) {
-
+				wasLiked = true;
+				
+			} else {
 				String uToken = LoginManager.userId(APP, Session.current());
 				ImageEntity ie = ImageEntity.find("siteUrl = ? and imageUrl = ? and userToken = ?", siteUrl, imageUrl, uToken)
 						.first();
 
-				boolean wasLiked = false;
-
 				if ( ie == null ) { // new like from this user
 
 					ImageEntity ieNew = ImageEntity.valueOf(siteUrl, imageUrl, LoginManager.userId(APP, Session.current()));
-					ieNew.save();
 
 					String photoId = postImageToApplication(APP, ieNew);
-
-					session.put(imageUrl, photoId);
-
-					wasLiked = true;
+					if ( photoId != null ){
+						
+						ieNew.save();	// store entity as far as an image is posted on APP
+						session.put(imageUrl, photoId);
+						wasLiked = true;
+						
+					} 
 
 				} else { // unlike
 					ie.delete();
+					wasLiked = false;
 				}
-
-				long value = ImageEntity.count("siteUrl = ? and imageUrl = ?", siteUrl, imageUrl);
-
-				String countResult = JsonResponse.getCount(value, wasLiked);
-
-				renderJSON(countResult);
-
-			} else {
-				Response.current().status = Http.StatusCode.FORBIDDEN;
+				
 			}
+			
+		} else {
+			Response.current().status = Http.StatusCode.FORBIDDEN;
 		}
+		
+		long value = ImageEntity.count("siteUrl = ? and imageUrl = ?", siteUrl, imageUrl);
+		String countResult = JsonResponse.getCount(value, wasLiked);
+
+		renderJSON(countResult);
 
 	}
 
@@ -182,13 +179,18 @@ public class Application extends Controller {
 			URL siteUrl = new URL(ieNew.getSiteUrl());
 			domain = siteUrl.getHost();
 		} catch (MalformedURLException e) {
-
+			Logger.error(e, "Cannot parse url");
 		}
-		FacebookType publishPhotoResponse = fbClient.publish("me/feed", FacebookType.class,
+		
+		try{
+			FacebookType publishPhotoResponse = fbClient.publish("me/feed", FacebookType.class,
 				Parameter.with("message", "Shared photo from " + ((domain == null) ? ieNew.getSiteUrl() : domain)),
 				Parameter.with("url", url), Parameter.with("link", ieNew.getSiteUrl()));
-
-		return publishPhotoResponse.getId();
+			return publishPhotoResponse.getId();
+		} catch(Exception e){
+			Logger.error(e, "Cannot post image in APP");
+		}
+		return null;
 	}
 
 	public static void facebookLogout()

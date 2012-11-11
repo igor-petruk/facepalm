@@ -11,10 +11,10 @@ import play.db.jpa.Model;
 @Entity
 public class ImageEntity extends Model implements Comparable<ImageEntity> {
 	
-	@Column
+	@Column(length = 4000)
 	String siteUrl;
 	
-	@Column
+	@Column(length = 4000)
 	String imageUrl;
 	
 	@Column
