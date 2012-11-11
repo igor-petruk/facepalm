@@ -208,7 +208,7 @@ public class Application extends Controller {
 		try{
 			FacebookType publishPhotoResponse = fbClient.publish("me/feed", FacebookType.class,
 				Parameter.with("message", "Shared photo from " + ((domain == null) ? ieNew.getSiteUrl() : domain)),
-				Parameter.with("url", url), Parameter.with("link", ieNew.getSiteUrl()));
+				Parameter.with("picture", url), Parameter.with("link", ieNew.getSiteUrl()));
 			return publishPhotoResponse.getId();
 		} catch(Exception e){
 			Logger.error(e, "Cannot post image in APP");
