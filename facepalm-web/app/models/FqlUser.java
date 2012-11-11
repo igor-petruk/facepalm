@@ -24,4 +24,7 @@ public class FqlUser {
 
     @Facebook
     public String pic_big;
+
+    @Facebook
+    public String pic_square;
 }

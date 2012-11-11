@@ -38,10 +38,10 @@ public class Application extends Controller {
     {
         if( LoginManager.isLoggedIn(APP, session.current(), false) ){
             String uid = LoginManager.userId(APP, session.current() );
-            //UserEntity user = UserEntity.findById(uid);
-            //if(user==null){
-             //   Session.current().remove( APP.sessionIdKey());
-            //}
+            UserEntity user = UserEntity.findById(uid);
+            if(user==null){
+                Session.current().remove( APP.sessionIdKey());
+            }
             Logger.info("Redirect to user page");
             user ( uid );
         }

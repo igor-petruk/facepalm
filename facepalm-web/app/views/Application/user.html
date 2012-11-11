@@ -1,5 +1,7 @@
-#{extends 'nav.html' /}
+#{extends 'main.html' /}
 #{set title:'Home' /}
+
+#{nav name:"${user.firstName} ${user.secondName}", actionLink: '@{Application.logout()}'  /}
 
 <div class="container-fluid">
     <div class="row-fluid">
@@ -14,7 +16,7 @@
 
         </div>
         <div class="span10">
-            <h3>Like streem</h3>
+            <h3>Like stream</h3>
 
           <div class="row-fluid">
 

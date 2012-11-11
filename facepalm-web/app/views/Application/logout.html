@@ -1,5 +1,12 @@
-#{extends 'nav.html' /}
+#{extends 'main.html' /}
 #{set title:'index' /}
+
+#{if user}
+    #{nav name:"${user.firstName} ${user.secondName}"  /}
+#{/if}
+#{else}
+    #{nav /}
+#{/else}
 
 <h1>Welcome to  Facepalm.com</h1>
 <h3>Like any content on the net(imgs, Links, Bold Text etc..)</h2>

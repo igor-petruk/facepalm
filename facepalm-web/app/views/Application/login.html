@@ -1,5 +1,12 @@
-#{extends 'nav.html' /}
+#{extends 'main.html' /}
 #{set title:'Home' /}
+
+#{if user}
+    #{nav name:"${user.firstName} ${user.secondName}"  /}
+#{/if}
+#{else}
+    #{nav /}
+#{/else}
 
 <h2>Please login with facebook</h2>
 

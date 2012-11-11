@@ -25,7 +25,7 @@ public enum SocialApplication
 		{
 			try {
 				FacebookClient fbClient = FbGraph.getFacebookClient();
-                String query = "SELECT uid, first_name, last_name, pic_big FROM user where uid=me()";
+                String query = "SELECT uid, first_name, last_name, pic_big, pic_square FROM user where uid=me()";
                 List<FqlUser> users = fbClient.executeQuery(query, FqlUser.class);
 
 				
@@ -36,7 +36,8 @@ public enum SocialApplication
 						UserEntity ue = UserEntity.valueOf(users.get(0).uid,
                                 users.get(0).first_name,
                                 users.get(0).last_name,
-                                users.get(0).pic_big);
+                                users.get(0).pic_big,
+                                users.get(0).pic_square);
 						ue.save();
 					}
 					

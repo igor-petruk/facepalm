@@ -20,19 +20,24 @@ public class UserEntity extends GenericModel {
 	
 	@Column
 	private String pictureUrl;
+
+    @Column
+    private String pictureSquare;
 	
 	public UserEntity()
 	{
 		// TODO Auto-generated constructor stub
 	}
 	
-	public static UserEntity valueOf(String appUserId, String firstName, String secondName, String pictureUrl){
+	public static UserEntity valueOf(String appUserId, String firstName, String secondName, String pictureUrl, String pictureSquare){
 		UserEntity ue = new UserEntity();
 		
 		ue.setAppUserId(appUserId);
 		ue.setFirstName(firstName);
 		ue.setSecondName(secondName);
 		ue.setPictureUrl(pictureUrl);
+        ue.setPictureSquare(pictureSquare);
+
 		
 		return ue;
 	}
@@ -60,5 +65,10 @@ public class UserEntity extends GenericModel {
 	{
 		this.pictureUrl = pictureUrl;
 	}
+
+    public void setPictureSquare(String pictureSquare)
+    {
+        this.pictureSquare = pictureSquare;
+    }
 	
 }
