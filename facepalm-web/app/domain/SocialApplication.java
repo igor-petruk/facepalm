@@ -27,9 +27,10 @@ public enum SocialApplication
 				if( p != null ){
 					currentSession.put(sessionIdKey(), p.getId());
 					
-					UserEntity ue = UserEntity.valueOf(p.getId(), p.getFirstName(), p.getLastName(), "http://grytsenko.com.ua/images/news/5541.jpg");
-					
-					ue.save();
+					if(UserEntity.hasNoUser(p.getId())){
+						UserEntity ue = UserEntity.valueOf(p.getId(), p.getFirstName(), p.getLastName(), "http://grytsenko.com.ua/images/news/5541.jpg");
+						ue.save();
+					}
 					
 				}
 			} catch (Exception e) {

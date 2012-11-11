@@ -37,6 +37,10 @@ public class UserEntity extends GenericModel {
 		return ue;
 	}
 	
+	public static boolean hasNoUser(String appUserId){
+		return UserEntity.findById(appUserId) == null;
+	}
+	
 	public void setAppUserId(String appUserId)
 	{
 		this.appUserId = appUserId;
