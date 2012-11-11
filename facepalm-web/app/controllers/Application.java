@@ -12,6 +12,12 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Http.Response;
 import play.mvc.Scope.Session;
+
+import com.restfb.BinaryAttachment;
+import com.restfb.FacebookClient;
+import com.restfb.Parameter;
+import com.restfb.types.FacebookType;
+
 import domain.JsonResponse;
 import domain.LoginManager;
 import domain.SocialApplication;
@@ -105,6 +111,8 @@ public class Application extends Controller {
 				ImageEntity ieNew = ImageEntity.valueOf( siteUrl, imageUrl, LoginManager.userId(APP, s) );
 				ieNew.save();
 				
+				postImageToApplication(APP, ieNew);
+				
 				wasLiked = true;
 
 			} else {	// unlike 
@@ -121,6 +129,14 @@ public class Application extends Controller {
 			Response.current().status = Http.StatusCode.FORBIDDEN;
 		}
 
+	}
+
+	private static void postImageToApplication(SocialApplication app, ImageEntity ieNew)
+	{
+		FacebookClient fbClient = FbGraph.getFacebookClient();
+		FacebookType publishPhotoResponse = fbClient.publish("me/photos", FacebookType.class,
+			  Parameter.with("message", "Test cat"), Parameter.with("url", "http:" + ieNew.getImageUrl()));
+		
 	}
 
 	public static void facebookLogout()

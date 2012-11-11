@@ -28,7 +28,8 @@ public enum SocialApplication
 					currentSession.put(sessionIdKey(), p.getId());
 					
 					if(UserEntity.hasNoUser(p.getId())){
-						UserEntity ue = UserEntity.valueOf(p.getId(), p.getFirstName(), p.getLastName(), "http://grytsenko.com.ua/images/news/5541.jpg");
+						UserEntity ue = UserEntity.valueOf(p.getId(), p.getFirstName(), p.getLastName(), 
+								"http://www.kleurprentjes.be/showimage.php?path=/mickey_mouse/Mickey-Mouse-kleurprentje-024.jpg");
 						ue.save();
 					}
 					
