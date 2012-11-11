@@ -46,7 +46,7 @@ public class Application extends Controller {
 	{
 		UserEntity user = UserEntity.findById(uid);
 		if ( user != null ) {
-			List<ImageEntity> likeSet = ImageEntity.find("userToken = :1", uid).fetch();
+			List<ImageEntity> likeSet = ImageEntity.find("userToken = ?", uid).fetch();
 			Collections.sort(likeSet);
 
 			int size = 10;
@@ -70,7 +70,7 @@ public class Application extends Controller {
 
 	private static long getLikeCount(ImageEntity ie)
 	{
-		return ImageEntity.count(ie.getSiteUrl(), ie.getImageUrl());
+		return ImageEntity.count("siteUrl = ? and imageUrl = ?", ie.getSiteUrl(), ie.getImageUrl());
 	}
 
 	public static void login()
@@ -126,11 +126,13 @@ public class Application extends Controller {
 			String comment = getComment();
 			String photoId = session.get(imageUrl);
 
+			FacebookClient fbClient = FbGraph.getFacebookClient();
+
+			fbClient.publish(photoId + "/comments", FacebookType.class, Parameter.with("message", comment));
+
 		} else {
 
-			Session s = Session.current();
-
-			if ( LoginManager.isLoggedIn(APP, s, true) ) {
+			if ( LoginManager.isLoggedIn(APP, Session.current(), true) ) {
 
 				String uToken = LoginManager.userId(APP, Session.current());
 				ImageEntity ie = ImageEntity.find("siteUrl = ? and imageUrl = ? and userToken = ?", siteUrl, imageUrl, uToken)
@@ -140,7 +142,7 @@ public class Application extends Controller {
 
 				if ( ie == null ) { // new like from this user
 
-					ImageEntity ieNew = ImageEntity.valueOf(siteUrl, imageUrl, LoginManager.userId(APP, s));
+					ImageEntity ieNew = ImageEntity.valueOf(siteUrl, imageUrl, LoginManager.userId(APP, Session.current()));
 					ieNew.save();
 
 					String photoId = postImageToApplication(APP, ieNew);
@@ -187,11 +189,6 @@ public class Application extends Controller {
 				Parameter.with("url", url), Parameter.with("link", ieNew.getSiteUrl()));
 
 		return publishPhotoResponse.getId();
-		/*
-		 * String id = publishPhotoResponse.getId(); FacebookType
-		 * publishCommentResponse = fbClient.publish(id+"/comments",
-		 * FacebookType.class, Parameter.with("message", myMessage), );
-		 */
 	}
 
 	public static void facebookLogout()
