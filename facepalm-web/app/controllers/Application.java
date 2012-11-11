@@ -1,9 +1,18 @@
 package controllers;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+
+import com.restfb.FacebookClient;
+import com.restfb.Parameter;
+
+import com.restfb.json.JsonObject;
+import com.restfb.types.FacebookType;
+import com.restfb.types.User;
 import models.ImageEntity;
+import models.Pair;
 import models.UserEntity;
 import play.Logger;
 import play.modules.facebook.FbGraph;
@@ -39,16 +48,20 @@ public class Application extends Controller {
     public static void successful(){
         if( LoginManager.isLoggedIn(APP, session.current(), true) ){
            Logger.info("data="+LoginManager.userId(APP,session.current()));
-            user(LoginManager.userId(APP,session.current()));
+            user(LoginManager.userId(APP, session.current()));
         }
         index();
     }
 
 	public static void user(String uid)
 	{
+        FacebookClient fbClient = FbGraph.getFacebookClient();
+        JsonObject photosConnection = fbClient.fetchObject("me/picture?type=large",JsonObject.class);
+        String firstPhotoUrl = photosConnection.getJsonObject("data").getJsonObject("url").toString();
+        Logger.info("photourl="+firstPhotoUrl);
 		UserEntity user = UserEntity.findById(uid);
 		if( user != null ){
-			List<ImageEntity> likeSet = ImageEntity.find("userToken = :1", uid).fetch(); 
+			List<ImageEntity> likeSet = ImageEntity.find("userToken = ?", uid).fetch();
 			Collections.sort(likeSet);
 			
 			int size = 10;
