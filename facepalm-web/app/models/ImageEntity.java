@@ -64,6 +64,26 @@ public class ImageEntity extends Model implements Comparable<ImageEntity> {
 		this.date = date;
 	}
 	
+	public String getSiteUrl()
+	{
+		return siteUrl;
+	}
+
+	public String getImageUrl()
+	{
+		return imageUrl;
+	}
+
+	public String getUserToken()
+	{
+		return userToken;
+	}
+
+	public Date getDate()
+	{
+		return date;
+	}
+
 	@PrePersist
 	void setLikeDate(){
 		this.date = new Date();

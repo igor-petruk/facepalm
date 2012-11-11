@@ -8,6 +8,7 @@
 // @require http://localhost:9000/public/javascripts/jquery.qtip.js
 // @resource qtipCSS http://localhost:9000/public/stylesheets/jquery.qtip.css
 // @resource bootstrapCSS http://localhost:9000/public/bootstrap/css/bootstrap.min.css
+// @resource userJSCSS http://localhost:9000/public/stylesheets/userjs.css
 // @include http://*
 // ==/UserScript==
 (function (window, undefined) {
@@ -27,10 +28,13 @@
         script.parentNode.removeChild(script);
     }
 
-    function likeImage(imageUrl, link, liked, counterSpan, mainSpan){
+    function likeImage(imageUrl, link, liked, counterSpan, mainSpan, comment){
         $.ajax({
             url: 'http://localhost:9000/like/'+encodeURIComponent(window.location.toString())+"/"+encodeURIComponent(imageUrl),
             type: 'POST',
+            data: {
+                comment:comment
+            },
             dataType: "json",
             success: function(data, status) {
                 $(counterSpan).text(data.count);
@@ -56,7 +60,7 @@
         var imgSrc = $(this).attr("src");
 
         var loader = $("<img>").attr("src","http://localhost:9000/public/images/ajax-loader.gif");
-        var initialLoader = $("<span>").append(loader).append("          ");
+        var initialLoader = $("<span>").append(loader).append($("<span>").css("width",200));
 
         $(this).qtip({
             // content: '<a href="#">Edit</a> | <a href="#">Delete</a>', // Give it some content
@@ -70,44 +74,77 @@
                     data: {}, // Data to pass along with your request
                     success: function(data, status) {
                         var a = $("<a>");
+                        var postSpan = $("<span>");
+
                         var liked = data.wasLiked=="true";
                         setLikeLinkName(a,liked);
                         var span = $("<span>");
                         var counter = $("<span>").text(data.count);
+                        span.append(a);
+                        span.append(" ").append(counter);
+                        span.append(postSpan);
+                        this.set('content.text', span);
 
                         a.on("click",function(e){
                             //if (data.loggedIn=="true"){
                             if (true){
                                 counter.html(loader);
                                 liked = !liked;
-                                likeImage(imgSrc, a,liked,counter, span);
+                                if (liked){
+                                    var p = $("<p>");
+                                    var ta = $("<textarea>").attr("cols",40).attr("rows",5).css("width",200);
+                                    ta.addClass("styled");
+                                    var postButton = $("<a>").text("Comment");
+                                    postButton.addClass("postbutton");
+                                    $(ta).on("keydown", function(event){
+                                        if(event.keyCode === 10 || event.keyCode == 13 && event.ctrlKey){
+                                            likeImage(imgSrc, a,liked,counter, span, $(ta).val());
+                                            event.preventDefault ? event.preventDefault() : event.returnValue = false;
+                                            postSpan.html("");
+                                        }
+                                    });
+                                    postButton.on("click", function (event){
+                                        likeImage(imgSrc, a,liked,counter, span, $(ta).val());
+                                        event.preventDefault ? event.preventDefault() : event.returnValue = false;
+                                        postSpan.html("");
+                                    });
+                                    p.append(ta).append($("<br>")).append(postButton);
+                                    postSpan.append(p);
+                                }else{
+                                    postSpan.html("");
+                                }
+                                likeImage(imgSrc, a,liked,counter, span, null);
                             }else{
                             }
                         });
-                        span.append(a);
-                        span.append(" ").append(counter);
-                        this.set('content.text', span);
-
                     }
                 }
             },
-            position: 'topRight', // Set its position
+            position:{
+                my:"top right",
+                at:"top right",
+                adjust:{
+                    x: -4,
+                    y: 4
+                }
+            },
             hide: {
                 fixed: true // Make it fixed so it can be hovered over
             },
             style: {
                 tip: {
-                    corner: false
+                    corner: false,
+                    offset: -20
                 },
                 classes:"ui-tooltip-tipped",
-                width:70,
-                padding: '2px 7px'// Give it some extra padding
+                width: { max: 700 },
+                padding: '2px 7px' // Give it some extra padding
             }
         });
     });
     var qtipCSS = GM_getResourceText ("qtipCSS");
     GM_addStyle (qtipCSS);
-    // GM_addStyle ( GM_getResourceText ("bootstrapCSS"));
+    GM_addStyle ( GM_getResourceText ("userJSCSS"));
 
     // load jQuery and execute the main function
     //addJQuery(main);

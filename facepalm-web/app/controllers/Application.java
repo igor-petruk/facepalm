@@ -46,26 +46,32 @@ public class Application extends Controller {
 
 	public static void user(String uid)
 	{
-            UserEntity user = UserEntity.findById(uid);
-            Logger.info("USER UID="+user);
-            if( user != null ){
-                List<ImageEntity> likeSet = ImageEntity.find("userToken = ?", uid).fetch();
-                Collections.sort(likeSet);
-
-                int size = 10;
-                if( size > likeSet.size() ){
-                    size = likeSet.size();
-                }
-                List<ImageEntity> cutList = likeSet.subList(0, size);
-                Logger.info("Render user page with likes");
-                render( user,  cutList );
-
-            } else{
-                Logger.info("USERID Redirect to index page");
-                index();
-            }
-
-
+		UserEntity user = UserEntity.findById(uid);
+		if( user != null ){
+			List<ImageEntity> likeSet = ImageEntity.find("userToken = :1", uid).fetch(); 
+			Collections.sort(likeSet);
+			
+			int size = 10;
+			if( size > likeSet.size() ){
+				size = likeSet.size();
+			}
+			List<ImageEntity> cutList = likeSet.subList(0, size);
+			
+			List<Pair> imageWithCounterSet = new ArrayList<Pair>(cutList.size());
+			
+			for( ImageEntity ie : cutList){
+				imageWithCounterSet.add( new Pair(ie, getLikeCount(ie)));
+		}
+			
+			render( user,  imageWithCounterSet );
+			
+		} else{
+			index();
+		}
+	}
+	
+	private static long getLikeCount( ImageEntity ie ){
+		return ImageEntity.count(ie.getSiteUrl(), ie.getImageUrl());
 	}
 
 	public static void login()
@@ -133,7 +139,7 @@ public class Application extends Controller {
 
 	public static void facebookLogout()
 	{
-		Session.current().remove( APP.sessionIdKey());
+		Session.current().remove( APP.sessionIdKey() );
 		FbGraph.destroySession();
 		index();
 	}
