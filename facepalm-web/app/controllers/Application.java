@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -166,16 +168,30 @@ public class Application extends Controller {
 
 	private static String postImageToApplication(SocialApplication app, ImageEntity ieNew)
 	{
+
 		FacebookClient fbClient = FbGraph.getFacebookClient();
-		FacebookType publishPhotoResponse = fbClient.publish(
-				"me/photos",
-				FacebookType.class,
-				Parameter.with("message", "I like it!"),
-				Parameter.with("url",
-						ieNew.getImageUrl().startsWith("//") ? "http:" + ieNew.getImageUrl() : ieNew.getImageUrl()));
+
+		String url = ieNew.getImageUrl();
+		if ( url.startsWith("//") ) {
+			url = "http:" + url;
+		}
+		String domain = null;
+		try {
+			URL siteUrl = new URL(ieNew.getSiteUrl());
+			domain = siteUrl.getHost();
+		} catch (MalformedURLException e) {
+
+		}
+		FacebookType publishPhotoResponse = fbClient.publish("me/feed", FacebookType.class,
+				Parameter.with("message", "Shared photo from " + ((domain == null) ? ieNew.getSiteUrl() : domain)),
+				Parameter.with("url", url), Parameter.with("link", ieNew.getSiteUrl()));
 
 		return publishPhotoResponse.getId();
-
+		/*
+		 * String id = publishPhotoResponse.getId(); FacebookType
+		 * publishCommentResponse = fbClient.publish(id+"/comments",
+		 * FacebookType.class, Parameter.with("message", myMessage), );
+		 */
 	}
 
 	public static void facebookLogout()
